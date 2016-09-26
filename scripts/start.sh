@@ -8,8 +8,8 @@ echo "#####"
 
 systemctl start pulseaudio 
 
-#sudo python bluetooth-agent.py &
+sudo python /carSystem/i2c-agent.py &
 
-sudo python i2c-agent.py &
+sudo python /carSystem/bluetooth-agent.py &
 
 exit 0
