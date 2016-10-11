@@ -157,16 +157,20 @@ class BluePlayer():
 			print("Waiting for media player")
 
 	def next(self):
-		self.player.Next(dbus_interface=PLAYER_IFACE)
+		if self.player:
+			self.player.Next(dbus_interface=PLAYER_IFACE)
 
 	def previous(self):
-		self.player.Previous(dbus_interface=PLAYER_IFACE)
+		if self.player:
+			self.player.Previous(dbus_interface=PLAYER_IFACE)
 
 	def play(self):
-		self.player.Play(dbus_interface=PLAYER_IFACE)
+		if self.player:
+			self.player.Play(dbus_interface=PLAYER_IFACE)
 
 	def pause(self):
-		self.player.Pause(dbus_interface=PLAYER_IFACE)
+		if self.player:
+			self.player.Pause(dbus_interface=PLAYER_IFACE)
 
 if __name__ == "__main__":
 	player = None

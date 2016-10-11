@@ -1,14 +1,16 @@
 #!/bin/bash
 
+source config.sh
+
 createAdHocNetwork()
 {
 	echo "Creating ad-hoc network"
-	ifconfig wlan0 down
-	iwconfig wlan0 mode ad-hoc
-	iwconfig wlan0 key teste #WEP key
-	iwconfig wlan0 essid RPi #SSID
-	ifconfig wlan0 192.168.1.100 netmask 255.255.255.0 up
-	/usr/sbin/dhcpd wlan0
+	sudo ifconfig wlan0 up
+	sudo iwconfig wlan0 mode ad-hoc
+	#sudo iwconfig wlan0 key aaaaa11111 #WEP key
+	sudo iwconfig wlan0 essid "RPi" #SSID
+	sudo ifconfig wlan0 192.168.3.100 netmask 255.255.255.0 
+	sudo /usr/sbin/dhcpd wlan0
 	echo "Ad-hoc network created"
 }
 
@@ -16,26 +18,15 @@ echo "================================="
 echo "RPi Network Conf Bootstrapper 0.1"
 echo "================================="
 echo "Scanning for known WiFi networks"
-ssids=('SCHNABEL-WLAN')
 connected=false
 for ssid in "${ssids[@]}"
 do
 	if iwlist wlan0 scan | grep $ssid > /dev/null
 	then
-		echo "First WiFi in range has SSID:" §ssid
-		echo "Starting supplicant for WPA/WPA2"
-		wpa_supplicant -B -i wlan0 .c /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null 2>&1
-		echo "Obtaining IP from DHCP"
-		if dhclient -1 wlan0
-		then 
-			echo "Connected to WiFi"
-			connected = true
-			break
-		else 
-			echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
-			wpa_cli terminate
-			break
-		fi
+		echo "Connected to WiFi " $ssid
+		sudo ifdown wlan0
+		#connected=true
+		break
 	else
 		echo "Not in range, WiFi with SSID:" $ssid
 	fi
