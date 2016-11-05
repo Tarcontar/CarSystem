@@ -92,62 +92,17 @@ void setup()
     send_package(0x34, cd, tr, 0xFF, 0xFF, 0xFF, 0xCF, 0x3C);
     delay(PACKET_DELAY);
 
-    if (digitalRead(DataOut))
-    {
-      if (capturingstart || capturingbytes)
-      {
-        captimelo = TCNT1;
-      }
-      else
-      {
-        capturingstart = 1; 
-     }
-      TCNT1 = 0;
-
-      // eval times
-      // tick @ 0.5us
-      // 9000us HIGH and 4500us LOW
-      Serial.println(captimehi);
-      Serial.println(captimelo);
-      if (captimehi > 8300 && captimelo > 3500) // && captimehi < 19000/8 && captimelo < 10000)
-      {
-        capturingstart = 0;
-        capturingbytes = 1;
-        Serial.println("startseq Found ");
-      }// Logic one = 1700us
-      else if(capturingbytes && captimelo > 1500) // && captimelo < 3500)
-      {
-        Serial.println("bit 1 ");
-        cmd[cmd_write_buffer_pointer] = (cmd [cmd_write_buffer_pointer] << 1) | 0x00000001;
-        cmdbit ++;
-      }
-      else if (capturingbytes && captimelo > 500)// && captimelo < 1200)
-      {
-        Serial.println("bit 0 ");
-        cmd[cmd_write_buffer_pointer] = (cmd[cmd_write_buffer_pointer] << 1);
-        cmdbit ++;
-      }
-
-      if (cmdbit == 32)
-      {
-        Serial.println("32bit");
-        Serial.println(cmd[cmd_write_buffer_pointer], HEX);
-        newcmd[cmd_write_buffer_pointer] = 1;
-        capturingbytes = 0;
-        cmdbit = 0;
-        cmd_write_buffer_pointer ++;
-        if (cmd_write_buffer_pointer == BUFFER)
-          cmd_write_buffer_pointer = 0;
-      }
-    }
-    else
-    {
-      captimehi = TCNT1;
-      TCNT1 = 0;
-    }
+   
   }
+}
 
-  for (int cmd_read_buffer_pointer = 0; cmd_read_buffer_pointer < BUFFER; cmd_read_buffer_pointer++)
+
+
+void loop()
+{
+  /*
+
+     for (int cmd_read_buffer_pointer = 0; cmd_read_buffer_pointer < BUFFER; cmd_read_buffer_pointer++)
    {
       Serial.println("test");
       if (newcmd [cmd_read_buffer_pointer])
@@ -265,14 +220,6 @@ void setup()
           Serial.print(idle);
       }
    }  
-}
-
-
-
-void loop()
-{
-  /*
-   
  
    if (idle)
    {
@@ -333,8 +280,8 @@ void read_Data_out() // remote signals
     else
     {
       capturingstart = 1;
-      TCNT1 = 0;
     }
+    TCNT1 = 0;
 
     // eval times
     // tick @ 0.5us
